@@ -1,0 +1,127 @@
+﻿body, html {
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    width: 100%; /* Ensure full width */
+    height: 100%; /* Ensure full height */
+    overflow: hidden; /* Disable scrollbars */
+}
+
+.scene {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Full width, avoiding horizontal overflow */
+    height: 100vh; /* Full viewport height */
+    background: #e4e4e4;
+    overflow: hidden; /* Ensure no scrolling occurs */
+    box-sizing: border-box; /* Include padding/margin in size */
+    /*padding: 0 50px;*/ /* Optional: Use padding instead of margin */
+}
+
+.wrapper1 {
+    margin-left: 150px;
+    margin-right: 150px;
+    border-radius: 30px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    padding-left:25px;
+    padding-right:25px;
+/*    margin-bottom: 70px;
+*/    box-shadow: 0 0 20px rgba(128, 0, 128, 0.5),
+    /*     Purple shadow 
+*/ 0 0 20px rgba(0, 128, 0, 0.5),
+    /*     Green shadow 
+*/ 0 0 20px rgba(0, 0, 255, 0.5),
+    /*     Blue shadow 
+*/ 0 0 20px rgba(255, 255, 255, 0.5);
+    /*     White shadow 
+*/
+}
+
+#humanFigure {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+    #humanFigure img {
+        width: 220px;
+        height: auto;
+    }
+
+#fallingWords {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.word {
+    position: absolute;
+    font-size: 1.5rem;
+    color: #ff4444;
+    font-weight: bold;
+    animation: fall 3s infinite linear;
+}
+
+.word1 {
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.word2 {
+    left: 30%;
+    animation-delay: 0.5s;
+}
+
+.word3 {
+    left: 50%;
+    animation-delay: 1s;
+}
+
+.word4 {
+    left: 70%;
+    animation-delay: 1.5s;
+}
+
+@keyframes fall {
+    0% {
+        top: -50px;
+        opacity: 1;
+    }
+
+    100% {
+        top: 100%;
+        opacity: 0;
+    }
+}
+
+#questZenithLogo {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-family: Arial, sans-serif;
+    color: #007bff;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+    #questZenithLogo h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 0 5px #24ecff, 0 0 10px #24ecff, 0 0 20px #24ecff;
+    }
+
+    #questZenithLogo p {
+        font-size: 1.2rem;
+        color: #e11cf8;
+    }
+
+.hidden {
+    display: none;
+}

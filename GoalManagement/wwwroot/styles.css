@@ -1,0 +1,62 @@
+﻿/* styles.css */
+
+/* Custom styles for the card */
+.wrapper1 {
+    margin: 40px auto;
+    border-radius: 30px;
+    padding-top: 50px;
+    padding-bottom: 20px;
+    margin-bottom: 70px;
+    margin-left:-190px;
+    justify-content:center;
+    max-width: 800px; /* Adjust the max-width value as needed */
+    width: 950px; /* Use a percentage of the container width for responsiveness */
+    box-shadow: 0 0 20px rgba(128, 0, 128, 0.5),
+    /* Purple shadow */
+    0 0 20px rgba(0, 128, 0, 0.5),
+    /* Green shadow */
+    0 0 20px rgba(0, 0, 255, 0.5),
+    /* Blue shadow */
+    0 0 20px rgba(255, 255, 255, 0.5);
+    /* White shadow */
+}
+/* Define a custom slide-in animation */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-50%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+.card {
+    margin: 15px;
+    height: 250px;
+    animation: slideIn 0.5s ease-out forwards; /* Apply animation to cards */
+    opacity: 0; /* Initially hide the cards */
+}
+.card-text {
+    color: black;
+    font-size: 28px; /* Change text color on hover */
+}
+
+    .card:hover {
+        background-color: black;
+        /* Change background color on hover */
+    }
+
+        .card:hover .card-title {
+            color: #e11cf8;
+            /* Change text color on hover */
+        }
+
+        .card:hover .card-text {
+            color: #00ffff;
+            /* Change text color on hover */
+        }

@@ -1,0 +1,138 @@
+﻿@page "/all-goals"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using GoalManagement.Models
+@inject GoalManagement.Data.GoalRepository TaskRepo
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="container mt-5">
+    <h2 class="text-center text-gradient mb-4">All Goals</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+<div class="row g-3 pt-3">
+    <div class="col-sm-6">
+                    <h4>Incomplete Goals</h4>
+        <ul class="list-group">
+            @foreach (var task in IncompleteTasks)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@task.Name</strong> <br />
+                        @task.Description <br />
+                        Due: @task.DueDate.ToShortDateString() <br /> 
+                    </div>
+                    <div>
+                        <button class="btn btn-success btn-sm" @onclick="() => MarkAsCompleted(task.Id)">Complete</button>
+                        <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteTask(task.Id)">Delete</button>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="col-sm-6">
+                    <h4>Completed Goals</h4>
+        <ul class="list-group">
+            @foreach (var task in CompletedTasks)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@task.Name</strong> <br />
+                        @task.Description <br />
+                        Due: @task.DueDate.ToShortDateString() <br /> 
+                    </div>
+                    <div>
+                        <button class="btn btn-warning btn-sm" @onclick="() => MarkAsIncomplete(task.Id)">Mark Incomplete</button>
+                        <button class="btn btn-danger btn-sm ms-2" @onclick="() => DeleteTask(task.Id)">Delete</button>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+<style>
+    .text-gradient {
+        color: #1e90ff; /* Blue color */
+        font-weight: bold;
+        text-shadow: none; /* Remove text shadow for a cleaner look */
+    }
+</style>
+
+@code {
+    private List<GoalItem> IncompleteTasks = new();
+    private List<GoalItem> CompletedTasks = new();
+    private bool ShowEditModal = false;
+    private GoalItem? SelectedTask;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTasks();
+    }
+
+    private async Task LoadTasks()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            var tasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+            IncompleteTasks = tasks.Where(t => !t.IsCompleted).ToList();
+            CompletedTasks = tasks.Where(t => t.IsCompleted).ToList();
+        }
+    }
+
+    private async Task MarkAsCompleted(int taskId)
+    {
+        await UpdateTaskCompletion(taskId, true);
+    }
+
+    private async Task MarkAsIncomplete(int taskId)
+    {
+        await UpdateTaskCompletion(taskId, false);
+    }
+
+    private async Task UpdateTaskCompletion(int taskId, bool isCompleted)
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            var task = await TaskRepo.GetTaskByIdAsync(taskId, email);
+            if (task != null)
+            {
+                task.IsCompleted = isCompleted;
+                await TaskRepo.UpdateTaskAsync(task, email);
+                await LoadTasks();
+            }
+        }
+    }
+
+
+    private async Task DeleteTask(int taskId)
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            await TaskRepo.DeleteTaskAsync(taskId, email);
+            await LoadTasks();
+        }
+    }
+
+    private async Task ReloadTasks()
+    {
+        await LoadTasks();
+        ShowEditModal = false;
+    }
+}

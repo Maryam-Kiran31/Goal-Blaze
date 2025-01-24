@@ -1,0 +1,71 @@
+/* Reset styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Navbar styles */
+.top-row.navbar {
+    position: sticky; /* Keeps the navbar at the top while scrolling */
+    top: 0;
+    z-index: 10; /* Ensures it appears above other elements */
+    background-color: rgba(0, 0, 0, 0.8); /* Slightly transparent black background */
+    padding: 0.5rem 1rem; /* Adds spacing around the navbar content */
+    color: #0d6efd; 
+    display: flex; /* Enables flexbox for alignment */
+    justify-content: space-between; /* Spreads content to fill the row */
+    align-items: center; /* Vertically centers the items */
+    min-height: 5rem; /* Ensures enough height for the navbar */
+}
+
+/* Navbar brand/logo */
+.navbar-brand {
+    font-size: 1.5rem; /* Slightly larger text for the brand/logo */
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+/* Navigation links */
+.nav-links {
+    display: flex; /* Arrange the links in a row */
+    gap: 1rem; /* Adds spacing between links */
+    list-style: none; /* Removes default list styling */
+}
+
+    .nav-links li a {
+        color: #0d6efd; /* Green text */
+        text-decoration: none; /* Removes underline */
+        font-size: 1rem;
+        transition: color 0.3s;
+    }
+
+        .nav-links li a:hover {
+            color: #ffffff; /* White text on hover */
+        }
+
+/* Logout/Email styling */
+.user-info {
+    display: flex; /* For horizontal alignment */
+    align-items: center;
+    gap: 1rem; /* Spacing between items (email and logout button) */
+    font-size: 0.9rem; /* Slightly smaller text */
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .top-row.navbar {
+        flex-direction: column; /* Stacks items vertically */
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column; /* Stacks links vertically on smaller screens */
+        gap: 0.5rem;
+    }
+
+    .user-info {
+        flex-direction: column; /* Stacks user info vertically */
+        align-items: flex-start;
+    }
+}

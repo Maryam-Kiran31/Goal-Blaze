@@ -1,0 +1,48 @@
+﻿@page "/thinking"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime 
+<div class="wrapper1">
+<div class="scene">
+    <!-- Overwhelmed Person Image -->
+    <div id="humanFigure" >
+        <img src="img/goal.PNG" alt="Overwhelmed Person" />
+    </div>
+
+    <!-- Falling Words -->
+    <div id="fallingWords">
+        <div class="word word1">Ambitions</div>
+        <div class="word word2">Milestones</div>
+        <div class="word word3">Targets</div>
+        <div class="word word4">Aims</div> 
+    </div>
+
+    <!-- Quest Zenith Logo -->
+        <div id="blaze" class="hidden">
+        <h1>Goal Blaze</h1>
+        <p>Your Ally for Success</p>
+    </div>
+</div>
+</div>
+<style>
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            // Hide falling words and human figure
+            document.getElementById("fallingWords").style.display = "none";
+            document.getElementById("humanFigure").style.display = "none";
+
+            // Show the Quest Zenith Logo
+            const logo = document.getElementById("blaze");
+            logo.classList.remove("hidden");
+            logo.style.opacity = "1";
+
+            // Wait for some time and then redirect
+            setTimeout(() => {
+                window.location.href = "/home"; // Update the target route here
+            }, 2000); // Delay before redirection (adjust as needed)
+        }, 3000); // Initial animation delay           
+    });
+</script>

@@ -1,0 +1,142 @@
+﻿@page "/update-goal"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using GoalManagement.Models
+@inject GoalManagement.Data.GoalRepository TaskRepo
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="container mt-5">
+    <h2 class="text-center text-gradient mb-4">Update Goal</h2>
+    <p>@StatusMessage</p>
+    <div class="mb-4">
+        <label for="taskSelect" class="form-label">Select Goal to Update</label>
+        <select id="taskSelect" class="form-select" @onchange="OnTaskSelect">
+            <option value="" disabled selected>Select a task</option>
+            @foreach (var task in AllTasks)
+            {
+                <option value="@task.Id">@task.Name</option>
+            }
+        </select>
+    </div>
+
+    @if (SelectedTask != null)
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form @onsubmit="HandleUpdateTask">
+                    <div class="mb-3">
+                        <label for="taskName" class="form-label">Task Name</label>
+                        <input type="text" id="taskName" class="form-control" @bind="SelectedTask.Name" placeholder="Enter task name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="taskDescription" class="form-label">Description</label>
+                        <textarea id="taskDescription" class="form-control" @bind="SelectedTask.Description" placeholder="Enter task description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <input type="date" id="dueDate" class="form-control" @bind="SelectedTask.DueDate" required />
+                    </div> 
+                    <div class="mb-3">
+                        <label for="complexity" class="form-label">Complexity</label>
+                        <select id="complexity" class="form-select" @bind="SelectedTask.Complexity">
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="isCompleted" @bind="SelectedTask.IsCompleted" />
+                        <label class="form-check-label" for="isCompleted">Mark as Completed</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-muted">Please select a Goal to update.</p>
+    }
+</div>
+
+<style>
+    .text-gradient {
+        color: #1e90ff; /* Blue color */
+        font-weight: bold;
+        text-shadow: none; /* Remove text shadow for a cleaner look */
+    }
+
+
+</style>
+
+@code {
+    private List<GoalItem> AllTasks = new();
+    private GoalItem? SelectedTask = null;
+    private string StatusMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTasks();
+    }
+
+    private async Task LoadTasks()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            AllTasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+        }
+        else
+        {
+            StatusMessage = "User not authenticated.";
+        }
+    }
+
+    private void OnTaskSelect(ChangeEventArgs e)
+    {
+        if (e.Value != null && int.TryParse(e.Value.ToString(), out int taskId))
+        {
+            SelectedTask = AllTasks.FirstOrDefault(t => t.Id == taskId);
+        }
+    }
+
+    private async Task HandleUpdateTask()
+    {
+        try
+        {
+            if (SelectedTask != null)
+            {
+                var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+                var user = authState.User;
+                var email = user.Identity?.Name;
+
+                if (!string.IsNullOrEmpty(email))
+                {
+                    Console.WriteLine($"Updating task with ID: {SelectedTask.Id}");
+                    await TaskRepo.UpdateTaskAsync(SelectedTask, email);
+                    StatusMessage = "Task updated successfully!";
+                    await LoadTasks(); // Refresh the task list
+                }
+                else
+                {
+                    StatusMessage = "User email not found. Update failed.";
+                }
+            }
+            else
+            {
+                StatusMessage = "No task selected for update.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating task: {ex.Message}");
+            StatusMessage = "An error occurred while updating the task.";
+        }
+    }
+
+}
+

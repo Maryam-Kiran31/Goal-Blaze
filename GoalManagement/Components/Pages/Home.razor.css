@@ -1,0 +1,22 @@
+﻿/*.container {
+    background:black;
+    ;
+}
+.feature-box {
+    position: relative;*/ /* Ensures rings are positioned relative to this box */
+    /*display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+    .feature-box h1 {
+         
+        font-family: 'Arial', sans-serif;
+        color: #fff;
+        z-index: 2;*/ /* Ensures the text is above the rings */
+        /*text-shadow: 0 0 5px #24ecff, 0 0 10px #24ecff, 0 0 20px #24ecff;
+    } 
+}*/
+  
+ 

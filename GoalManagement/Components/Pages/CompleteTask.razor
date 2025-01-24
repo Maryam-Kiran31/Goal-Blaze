@@ -1,0 +1,76 @@
+﻿@page "/complete-task"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using GoalManagement.Models
+@inject GoalManagement.Data.GoalRepository TaskRepo
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="container mt-5">
+    <h2 class="text-center text-gradient mb-4">Completed Goals</h2>
+
+    @if (IncompleteTasks.Any())
+    {
+        <ul class="list-group">
+            @foreach (var task in IncompleteTasks)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@task.Name</strong>
+                        <p class="mb-0 text-muted">@task.Description</p>
+                        <small class="text-info">Completed On: @task.DueDate.ToShortDateString()</small><br /> 
+                        <small>Complexity: <span class="badge bg-secondary">@task.Complexity</span></small>
+                    </div>
+                    <button class="btn btn-success ms-3" @onclick="() => HandleInCompleteTask(task.Id)">Incomplete</button>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p class="text-center text-muted">No completed tasks yet.</p>
+    }
+</div>
+
+<style>
+    .text-gradient {
+        color: #1e90ff; /* Blue color */
+        font-weight: bold;
+        text-shadow: none; /* Remove text shadow for a cleaner look */
+    }
+</style>
+
+@code {
+    private List<GoalItem> IncompleteTasks = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            var allTasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+            IncompleteTasks = allTasks.Where(t => t.IsCompleted).ToList();
+        }
+    }
+
+    private async Task HandleInCompleteTask(int taskId)
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            var task = await TaskRepo.GetTaskByIdAsync(taskId, email);
+            if (task != null)
+            {
+                task.IsCompleted = false;
+                await TaskRepo.UpdateTaskAsync(task, email);
+                IncompleteTasks = IncompleteTasks.Where(t => t.Id != taskId).ToList();
+            }
+        }
+    }
+}

@@ -1,0 +1,56 @@
+﻿@page "/search-goal"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using GoalManagement.Models
+@inject GoalManagement.Data.GoalRepository TaskRepo
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="container mt-5">
+    <h3 class="text-center text-gradient mb-4">Search Goal</h3>
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search by Name or Description" @bind="SearchQuery" />
+    <button class="btn btn-primary" @onclick="HandleSearchTask">Search</button>
+</div>
+    @if (SearchResults.Any())
+    {
+        <ul class="list-group">
+    @foreach (var task in SearchResults)
+    {
+                <li class="list-group-item d-flex justify-content-between align-items-center">@task.Name - @task.Description</li>
+    }
+</ul>
+    }
+    else
+    {
+        <p class="text-center text-muted">No Goal yet.</p>
+    }
+</div>
+<style>
+    .text-gradient {
+        color: #1e90ff; /* Blue color */
+        font-weight: bold;
+        text-shadow: none; /* Remove text shadow for a cleaner look */
+    }
+</style>
+@code {
+    private string SearchQuery = string.Empty;
+    private List<GoalItem> SearchResults = new();
+
+    private async Task HandleSearchTask()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            var allTasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+            SearchResults = allTasks
+                .Where(t => t.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                            t.Description.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+}

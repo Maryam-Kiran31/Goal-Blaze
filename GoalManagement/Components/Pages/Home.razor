@@ -1,0 +1,179 @@
+﻿@page "/"
+@page "/home"
+@implements IDisposable
+
+@inject NavigationManager NavigationManager  
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left side: Fixed Navigation Menu (stays below the navbar) -->
+        <div class="col-md-2" style="position: fixed; top: 96px; left: 0; height: 100%; background-color: rgba(0, 0, 0, 0.8); padding-top: 40px; z-index: 100;">
+            <ul class="navbar-nav">
+                <AuthorizeView>
+                    <Authorized>
+                        <!-- Navigation links -->
+                        <li class="nav-item text-center">
+                            <NavLink class="nav-link  d-flex align-items-center " href="/add-goals">
+                                <i class="fas fa-plus-circle me-2 d-none d-md-inline"></i>
+                                <span class="d-none d-md-inline" style="color: #0d6efd">Add Goal</span>
+                                <i class="fas fa-plus-circle d-md-none"></i>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item text-center">
+                            <NavLink class="nav-link text-white d-flex align-items-center" href="/complete-goal">
+                                <i class="fas fa-check-circle me-2 d-none d-md-inline"></i>
+                                <span class="d-none d-md-inline" style="color: #0d6efd">Complete Goal</span>
+                                <i class="fas fa-check-circle d-md-none"></i>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item text-center">
+                            <NavLink class="nav-link text-white d-flex align-items-center" href="/incomplete-goal">
+                                <i class="fas fa-hourglass-half me-2 d-none d-md-inline"></i>
+                                <span class="d-none d-md-inline" style="color: #0d6efd">Incomplete Goal</span>
+                                <i class="fas fa-check-circle d-md-none"></i>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item text-center">
+                            <NavLink class="nav-link text-white d-flex align-items-center" href="/search-goal">
+                                <i class="fas fa-search me-2 d-none d-md-inline"></i>
+                                <span class="d-none d-md-inline" style="color: #0d6efd">Search Goal</span>
+                                <i class="fas fa-search d-md-none"></i>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item text-center">
+                            <NavLink class="nav-link text-white d-flex align-items-center" href="/all-goals">
+                                <i class="fas fa-tasks me-2 d-none d-md-inline"></i>
+                                <span class="d-none d-md-inline" style="color: #0d6efd">All Goals</span>
+                                <i class="fas fa-tasks d-md-none"></i>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item text-center">
+                            <NavLink class="nav-link text-white d-flex align-items-center" href="/update-goal">
+                                <i class="fas fa-edit me-2 d-none d-md-inline"></i>
+                                <span class="d-none d-md-inline" style="color: #0d6efd">Update Goal</span>
+                                <i class="fas fa-edit d-md-none"></i>
+                            </NavLink>
+                        </li> 
+                    </Authorized>
+                    <NotAuthorized>
+                        <div class="nav-item px-3" >
+                            <p style="color: #0d6efd">Register yourself and manage your goal</p>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </ul>
+        </div>
+
+        <!-- Right side: Content (Story or Form) -->
+        <div class="col-md-10" style="margin-left: 15%; padding-top: 20px;">
+            @if (isStoryVisible)
+            {
+                <div class="about-us bg-light p-4 rounded shadow-lg">
+                    <h3 class="text-center text-gradient mb-4">Our Story</h3>
+                    <p class="text-muted text-justify" style="line-height: 1.8;">
+                        In the boundless world of goals and aspirations, a spark of innovation ignited. This spark transformed into a mission: to revolutionize how we track, pursue, and achieve our most meaningful objectives. With this purpose in mind, <strong>GoalBlaze</strong> was created.
+                    </p>
+                    <p class="text-muted text-justify" style="line-height: 1.8;">
+                        GoalBlaze isn't just another goal tracker; it's the catalyst that propels you forward, lighting the way as you navigate your path to success. With its sleek, user-friendly design and powerful features, it empowers you to stay on course, overcome obstacles, and celebrate every win, big or small.
+                    </p>
+                    <p class="text-muted text-justify" style="line-height: 1.8;">
+                        Join us on this exciting journey—one where we fuel your ambition, push your limits, and watch you ignite your true potential. Are you ready to blaze the trail towards your dreams?
+                    </p>
+                </div>
+            }
+            else
+            {
+                <RouteView />
+            }
+        </div>
+    </div>
+</div>
+ 
+ 
+ 
+<style>
+    #sidebar {
+        height: 100vh;
+        overflow-y: auto; /* Enable vertical scrolling */
+    }
+
+        /* Custom scrollbar for Webkit-based browsers */
+        #sidebar::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+
+        #sidebar::-webkit-scrollbar-thumb {
+            background: #8562c3; /* Purple scrollbar thumb */
+            border-radius: 4px; /* Rounded scrollbar thumb */
+        }
+
+            #sidebar::-webkit-scrollbar-thumb:hover {
+                background: #8562c3; /* Lighter purple when hovered */
+            }
+
+        #sidebar::-webkit-scrollbar-track {
+            background: #8562c3; /* Light track background */
+            border-radius: 4px; /* Rounded track */
+        }
+
+    /* For Firefox */
+    #sidebar {
+        scrollbar-width: thin; /* Make the scrollbar thinner */
+        scrollbar-color:  #f8f9fa; /* Thumb and track colors */
+    }
+
+
+    .nav-link {
+        font-family: 'Arial', sans-serif;
+        font-size: 18px;
+        padding: 12px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+        .nav-link:hover {
+            background-color:white;
+        }
+
+    .nav-item.active .nav-link {
+        background-color:white;
+    }
+</style>
+@code {
+
+     private bool isStoryVisible = true;
+
+    private void DisplayAddForm()
+    {
+        isStoryVisible = false;  // Hide story when Add goal is clicked
+    }
+
+    private void DisplayUpdateForm()
+    {
+        isStoryVisible = false;  // Hide story when Update goal is clicked
+    }
+
+    private void DisplayDeleteForm()
+    {
+        isStoryVisible = false;  // Hide story when Delete goal is clicked
+    }
+
+
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

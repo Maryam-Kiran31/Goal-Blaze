@@ -1,0 +1,146 @@
+﻿@page "/add-goals"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using GoalManagement.Models
+@inject GoalManagement.Data.GoalRepository TaskRepo
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
+<p>@status</p>
+<div class="container mt-5">
+    <h2 class="text-center text-gradient mb-4">Goal Management</h2>
+    <p>@status</p>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <EditForm Model="NewTask" OnValidSubmit="HandleAddTask">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="taskName" class="form-label">Goal Name</label>
+                        <InputText id="taskName" class="form-control" @bind-Value="NewTask.Name" placeholder="Enter goal name" />
+                        <ValidationMessage For="@(() => NewTask.Name)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="dueDate" class="form-label">Due Date</label>
+                        <InputDate id="dueDate" class="form-control" @bind-Value="NewTask.DueDate" />
+                        <ValidationMessage For="@(() => NewTask.DueDate)" />
+                    </div>
+                </div>
+
+              <div class="row g-3 pt-3"> 
+                    <!-- Complexity Dropdown -->
+                    <div class="col-sm-6">
+                        <label for="complexity" class="form-label">Complexity</label>
+                        <InputSelect id="complexity" class="form-select" @bind-Value="NewTask.Complexity">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => NewTask.Complexity)" />
+                    </div>
+                </div>
+
+
+                <div class="row g-3 pt-3">
+                    <div class="col-12">
+                        <label for="taskDescription" class="form-label">Description</label>
+                        <InputTextArea id="taskDescription" class="form-control" @bind-Value="NewTask.Description" rows="3" placeholder="Enter task description" />
+                        <ValidationMessage For="@(() => NewTask.Description)" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-3">Add Goal</button>
+            </EditForm>
+        </div>
+    </div>
+
+    <h3 class="text-center mt-4">Goal List</h3>
+    <ul class="list-group">
+        @foreach (var task in Tasks)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>@task.Name</strong>
+                    <p class="mb-0 text-muted">@task.Description</p>
+                    <small class="text-info">Due: @task.DueDate.ToShortDateString()</small><br /> 
+                    <small>Complexity: <span class="badge bg-secondary">@task.Complexity</span></small>
+                </div>
+                <button class="btn btn-danger btn-sm" @onclick="() => HandleRemoveTask(task.Id)">Delete</button>
+            </li>
+        }
+    </ul>
+</div>
+
+<style>
+    .text-gradient {
+        color: #1e90ff; /* Blue color */
+        font-weight: bold;
+        text-shadow: none; /* Remove text shadow for a cleaner look */
+    }
+</style>
+
+@code {
+    private GoalItem NewTask { get; set; } = new GoalItem();
+    private List<GoalItem> Tasks { get; set; } = new List<GoalItem>();
+    private String status = "nhi1";
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            Tasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+        }
+    }
+
+    private async Task HandleAddTask()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var email = user.Identity?.Name;
+
+            if (!string.IsNullOrEmpty(email) && NewTask != null && !string.IsNullOrWhiteSpace(NewTask.Name) && NewTask.DueDate != default)
+            {
+                status = $"Adding task for {email}";
+
+                await TaskRepo.AddTaskAsync(NewTask, email);
+                status = $"Task added for {email}";
+
+                Tasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+                status = "Task list refreshed";
+                NewTask = new GoalItem(); // Reset form
+            }
+            else
+            {
+                status = "Validation failed: Email or task data is missing.";
+            }
+        }
+        catch (Exception ex)
+        {
+            status = $"An error occurred: {ex.Message}";
+            // Log the exception for further inspection
+            Console.WriteLine(ex);
+        }
+    }
+
+
+    private async Task HandleRemoveTask(int id)
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var email = user.Identity?.Name;
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            await TaskRepo.DeleteTaskAsync(id, email);
+            Tasks = (await TaskRepo.GetTasksByUserAsync(email)).ToList();
+        }
+    }
+}

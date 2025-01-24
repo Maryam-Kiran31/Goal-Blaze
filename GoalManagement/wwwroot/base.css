@@ -1,0 +1,100 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-font-family: 'Poppins', sans-serif;
+    --light-white: #f5f8fa;
+    --gray: #5e6278;
+    --gray-1: #e3e3e3;
+}
+
+body {
+    font-family: var(--primary-font-family);
+    font-size: 14px;
+
+}
+
+.wrapper {
+    padding: 0;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+    background: #111;
+    overflow-y: auto;
+}
+
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    border-radius: 5px;
+    padding: 5px;
+    background: linear-gradient(to left, #00ffff, #FF02FF);
+    animation: marquee-animation 10s linear infinite;
+}
+
+@keyframes marquee-animation {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.wrapper input {
+    background-color: var(--light-white);
+    border-color: var(--light-white);
+    color: var(--gray);
+}
+
+h3 {
+    color: #ff00ff;
+    text-shadow: 0 0 7px #00ffff;
+    font-family: Pacifico;
+
+}
+h1 {
+    color: #ff00ff;
+    text-shadow: 0 0 7px #00ffff;
+    font-family: Pacifico;
+}
+p {
+    color: #fff;
+    text-decoration:none;
+}
+.btn-custom:hover {
+    background: linear-gradient(to left, #00ffff, #FF02FF);
+    color: white;
+    /* Change text color on hover */
+}
+
+form {
+    padding: 10px;
+    border: 05px solid var(--gray-1);
+    padding-bottom: 0; /* Remove padding from the bottom */
+    margin-bottom: 100px;
+}
+.table-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Set the container height to the full viewport height */
+
+}
+
+.table {
+    /* Add any additional table styling here */
+    color: #ffff !important;
+}
+/* In your CSS file */
+.table-header {
+    color: white;
+    text-shadow: 0 0 7px #ff00ff;
+}
